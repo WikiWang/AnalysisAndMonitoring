@@ -1,0 +1,40 @@
+.analysis_panel-nav {
+    min-height: 0;
+    box-shadow: 0 0 10px #BDBDBD;
+    border-radius: 5px;
+    max-height: none;
+	overflow: auto;
+}
+
+#data { margin-left:320px;}
+#data textarea { margin:0; padding:0; height:100%; width:100%; border:0; background:white; display:block; line-height:18px; resize:none; }
+#data, #code { font: normal normal normal 12px/18px 'Consolas', monospace !important; }
+
+#analysis_panel .folder { background:url('./file_sprite.png') right bottom no-repeat; }
+#analysis_panel .file { background:url('./file_sprite.png') 0 0 no-repeat; }
+#analysis_panel .file-pdf { background-position: -32px 0 }
+#analysis_panel .file-as { background-position: -36px 0 }
+#analysis_panel .file-c { background-position: -72px -0px }
+#analysis_panel .file-iso { background-position: -108px -0px }
+#analysis_panel .file-htm, #analysis_panel .file-html, #analysis_panel .file-xml, #analysis_panel .file-xsl { background-position: -126px -0px }
+#analysis_panel .file-cf { background-position: -162px -0px }
+#analysis_panel .file-cpp { background-position: -216px -0px }
+#analysis_panel .file-cs { background-position: -236px -0px }
+#analysis_panel .file-sql { background-position: -272px -0px }
+#analysis_panel .file-xls, #analysis_panel .file-xlsx { background-position: -362px -0px }
+#analysis_panel .file-h { background-position: -488px -0px }
+#analysis_panel .file-crt, #analysis_panel .file-pem, #analysis_panel .file-cer { background-position: -452px -18px }
+#analysis_panel .file-php { background-position: -108px -18px }
+#analysis_panel .file-jpg, #analysis_panel .file-jpeg, #analysis_panel .file-png, #analysis_panel .file-gif, #analysis_panel .file-bmp { background-position: -126px -18px }
+#analysis_panel .file-ppt, #analysis_panel .file-pptx { background-position: -144px -18px }
+#analysis_panel .file-rb { background-position: -180px -18px }
+#analysis_panel .file-text, #analysis_panel .file-txt, #analysis_panel .file-md, #analysis_panel .file-log, #analysis_panel .file-htaccess { background-position: -254px -18px }
+#analysis_panel .file-doc, #analysis_panel .file-docx { background-position: -362px -18px }
+#analysis_panel .file-zip, #analysis_panel .file-gz, #analysis_panel .file-tar, #analysis_panel .file-rar { background-position: -416px -18px }
+#analysis_panel .file-js { background-position: -434px -18px }
+#analysis_panel .file-css { background-position: -144px -0px }
+#analysis_panel .file-fla { background-position: -398px -0px }
+
+.export_btn{
+	margin: 15px 10px 10px 10px !important;
+}

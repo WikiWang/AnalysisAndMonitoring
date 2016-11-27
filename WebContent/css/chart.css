@@ -1,0 +1,13 @@
+.chart_panel {
+    margin:15px 10px 10px 10px;
+    max-height: none;
+}
+
+.chart_table{
+    margin:15px 10px 10px 10px;
+	display: block;
+}
+
+.my_table{
+    margin:0;
+}

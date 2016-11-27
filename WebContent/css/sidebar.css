@@ -1,0 +1,23 @@
+.side-hr {
+	margin : 0px 10px;
+	border-top : 1px solid #676767;
+}
+
+#sidebar-wrapper {
+	border-right: 1px solid #ddd;
+	overflow: hidden;
+	background-color : #F2F2F2;
+}
+
+#menu-toggle{
+	z-index: 10;
+	background-image: url(../img/icon.png);
+    background-position: 0 0;
+    width: 17px;
+    height: 185px;
+    position: fixed;
+    /* right: 220px; */
+    top: 35%;
+    cursor: pointer;
+    left: 250px;
+}

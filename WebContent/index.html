@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="">
+<meta name="author" content="">
+
+<title>数据分析系统</title>
+
+<!-- Bootstrap Core CSS -->
+<!-- <link href="css/bootstrap.min.css" rel="stylesheet"> -->
+
+<!-- Custom CSS -->
+<link href="css/simple-sidebar.css" rel="stylesheet">
+
+<link href="css/sidebar.css" rel="stylesheet">
+
+<link href="css/tree.css" rel="stylesheet">
+<link href="css/paramlist.css" rel="stylesheet">
+<link href="css/chart.css" rel="stylesheet">
+<link href="css/analysispanel.css" rel="stylesheet">
+<link href="css/docs.css" rel="stylesheet">
+<link href="css/docs.css" rel="stylesheet">
+
+<!--Echarts  -->
+<link href="css/ECharts/echartsHome.css" rel="stylesheet">
+
+<!-- <link rel="stylesheet" href="js/jstree/themes/default/style.min.css" /> -->
+
+<!-- Main CSS -->
+<link href="css/css/charisma-app.css" rel="stylesheet">
+<link id="bs-css" href="css/css/bootstrap-cerulean.min.css"
+	rel="stylesheet">
+
+<!-- zTree  -->
+<link rel="stylesheet" href="css/zTree/demo.css" type="text/css">
+<link rel="stylesheet" href="css/zTree/zTreeStyle/zTreeStyle.css"
+	type="text/css">
+
+<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+<!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+
+	<div class="navbar navbar-default" role="navigation">
+		<div class="navbar-inner">
+			<!-- <img src="img/BUAAlogo.jpg" style="height:45px; float:left"> -->
+			<a class="navbar-brand" href="index.html"><i
+				class="fa fa-comments"></i> <strong>数据分析 </strong> </a>
+		</div>
+	</div>
+
+	<div id="page_wrapper" class="ch-container">
+		<div class="row">
+			<div class="col-xs-12 col-sm-6 col-md-3 col-lg-3 ch-container">
+				<div class="tree-nav ztree" id="tree"></div>
+			</div>
+			<div class="col-xs-12 col-sm-6 col-md-3 col-lg-3 ch-container">
+				<div class="param_list-nav ztree" id="param_list">
+					<div class="search">
+						<input placeholder="搜索" class="search-query form-control empty search_input" name="query" id="key"  type="text">
+						<!-- 搜索：<input type="text" id="key" value="" class="empty" /> -->
+					</div>
+					<div class="ztree" id="param_list_tree">
+					</div>
+				</div>
+			</div>
+			<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 ch-container">
+				<div class="analysis_panel-nav" id="analysis_panel">
+					<!-- <ul class="nav nav-pills">
+						<li><i class="ec-icon ec-icon-theme"></i> <a href="#" onclick="showTable()">表格</a></li>
+						<li><i class="ec-icon ec-icon-pie"></i> <a href="#" onclick="showPieChart()">饼图</a></li>
+						<li><i class="ec-icon ec-icon-k"></i> <a href="#" onclick="showLineChart()">折线图</a></li>
+						<li><i class="ec-icon ec-icon-line"></i> <a href="#" onclick="showAreaChart()">面积图</a></li>
+                        <li><i class="ec-icon ec-icon-bar"></i> <a href="#" onclick="showBarChart()">柱状图</a></li>
+                        <li><i class="ec-icon ec-icon-scatter"></i> <a href="#" onclick="showScatterChart()">散点图</a></li>
+                        <li><i class="ec-icon ec-icon-treemap"></i> <a href="#" onclick="showTable()">对比图</a></li>
+                        
+                        <li><i class="ec-icon ec-icon-radar"></i> <a href="#radar">雷达（面积）图</a></li>
+                        <li><i class="ec-icon ec-icon-chord"></i> <a href="#chord">和弦图</a></li>
+                        <li><i class="ec-icon ec-icon-force"></i> <a href="#force">力导向布局图</a></li>
+                        <li><i class="ec-icon ec-icon-map"></i> <a href="#map">地图</a></li>
+                        <li><i class="ec-icon ec-icon-gauge"></i> <a href="#gauge">仪表盘</a></li>
+                        <li><i class="ec-icon ec-icon-funnel"></i> <a href="#funnel">漏斗图</a></li>
+                        <li><i class="ec-icon ec-icon-heatmap"></i> <a href="#heatmap">热力图</a></li>
+                        <li><i class="ec-icon ec-icon-eventRiver"></i> <a href="#eventRiver">事件河流图</a></li>
+                        <li><i class="ec-icon ec-icon-venn"></i> <a href="#venn">韦恩图</a></li>
+                        <li><i class="ec-icon ec-icon-tree"></i> <a href="#tree">树图</a></li>
+                        <li><i class="ec-icon ec-icon-wordCloud"></i> <a href="#wordCloud">字符云</a></li>
+                        <li><i class="ec-icon ec-icon-mix"></i> <a href="#mix">混搭</a></li>
+                        <li><i class="ec-icon ec-icon-component"></i> <a href="#component">组件</a></li>
+                        <li><i class="ec-icon ec-icon-other"></i> <a href="#other">其他</a></li>
+                        <li><i class="ec-icon ec-icon-topic"></i> <a href="#topic">专题</a></li>
+					</ul> -->
+					<div class="navbar navbar-default" role="navigation">
+						<div class="navbar-inner-small">
+							<ul class="nav navbar-nav top-menu">
+								<li class="dropdown">
+									<a href="#" data-toggle="dropdown">
+										<i class="ec-icon ec-icon-treemap"></i> 图表分析 <span class="caret"></span>
+									</a>
+									<ul class="dropdown-menu" role="menu">
+										<li><a href="#" onclick="showTable()">对比图</a>
+										</li>
+										<li><a href="#" onclick="showPieChart()">饼图</a>
+										</li>
+										<li><a href="#" onclick="showLineChart()">折线图</a>
+										</li>
+										<li><a href="#" onclick="showAreaChart()">面积图</a>
+										</li>
+										<li><a href="#" onclick="showBarChart()">柱状图</a>
+										</li>
+										<li><a href="#" onclick="showScatterChart()">散点图</a>
+										</li>
+									</ul>
+								</li>
+							</ul>
+						</div>
+					</div>
+					<div class="chart_panel" id="chart_panel"></div>
+					<div class="chart_table table2excel" id="chart_table">
+						<table id="tableChart"
+							class="table table-bordered table-striped table-condensed">
+							<thead>
+								<tr>
+									<th>名称</th>
+									<th>城市</th>
+									<th>密码</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>Tanmay</td>
+									<td>Bangalore</td>
+									<td>560001</td>
+								</tr>
+								<tr>
+									<td>Sachin</td>
+									<td>Mumbai</td>
+									<td>400003</td>
+								</tr>
+								<tr>
+									<td>Uma</td>
+									<td>Pune</td>
+									<td>411027</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<button id="table_to_excel" class="btn btn-primary btn-sm export_btn">导出excel</button>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+	<!-- jQuery -->
+	<script src="js/jquery/jquery.js"></script>
+	<script src="js/jquery/jquery.slides.js"></script>
+	<script src="js/jquery/jquery.scrollTo.js"></script>
+	<script src="js/jquery/jquery.table2excel.js"></script>
+	<script src='js/jquery/jquery.dataTables.min.js'></script>
+
+	<!-- table JS -->
+	<script src="bower_components/responsive-tables/responsive-tables.js"></script>
+
+	<!-- Bootstrap Core JavaScript -->
+	<script src="js/bootstrap/bootstrap.min.js"></script>
+
+	<!-- zTree JS -->
+	<script type="text/javascript" src="js/zTree/jquery.ztree.core.js"></script>
+	<script type="text/javascript" src="js/zTree/jquery.ztree.excheck.js"></script>
+	<script type="text/javascript" src="js/zTree/jquery.ztree.exedit.js"></script>
+
+	<!-- 	<script type="text/javascript" src="js/jstree/jstree.js"></script>
+	<script type="text/javascript" src="js/jstree.js"></script>
+ -->
+	<!-- chart JS -->
+	<script src="js/echarts/echarts.js"></script>
+	<script src="js/charts.js"></script>
+
+	<!-- main JS -->
+	<script src="js/getzTree.js"></script>
+	<script src="js/fixcss.js"></script>
+	<script src='js/tableToExcel.js'></script>
+	<script src="js/index.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,78 @@
+body{
+	font-family: arial,tahoma,'Microsoft Yahei','\5b8b\4f53',sans-serif !important;
+}
+
+#docs h1 {
+	        font-size: 24px;
+	    border-left: 12px solid #4F9CEE;
+	    background: url(../img/title_line.png);
+}
+
+#docs h1 span{
+	    padding: 0 8px 0 18px;
+	    background: #fff;
+}
+
+#docs h2{
+	font-size:24px;
+}
+
+#docs h3{
+	color: #F7A35C;
+	font-size: 20px;
+}
+
+.highlight {
+    padding: 9px 10px;
+    /*margin-bottom: 14px;*/
+    background-color: #f7f7f9;
+    border: 1px solid #e1e1e8;
+    border-radius: 4px;
+}
+
+.highlight p{
+	margin: 10px 0px;
+}
+
+.highlight p.float{
+	margin: 10px;
+}
+
+.highlight p.float span{
+	 font-size: 30px;
+	 margin-right: 10px;
+}
+
+.highlight p .glyphicon{
+	margin-right: 8px;
+}
+
+.highlight .nav-tabs>li.active>a{
+	background-color: #F7F7F9;
+}
+
+.highlight th label{
+	margin-left:10px;
+}
+
+.abs-table{
+	width: 95%;	
+	margin-bottom: 0px;
+}
+
+.abs-table th{
+	text-align: right;
+	    width: 150px;
+} 
+
+.abs-table th{
+	border-top: 0px !important;
+}
+.abs-table td{
+	border-top: 0px !important;
+}
+
+.table{
+	margin-top: 10px;
+	margin-bottom: 10px !important;
+}

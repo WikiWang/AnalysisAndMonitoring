@@ -1,0 +1,53 @@
+.param_list-nav {
+    min-height: 0;
+    box-shadow: 0 0 10px #BDBDBD;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    padding-bottom: 0;
+    max-height: none;
+}
+#param_list { 
+	float:left; 
+	/* min-width:250px;  */
+	border-right:1px solid silver; 
+	overflow:auto; 
+	padding:0px 0px;     
+	width: 100%; 
+	/*overflow-y: hidden;*/
+	}
+#data { margin-left:320px;}
+#data textarea { margin:0; padding:0; height:100%; width:100%; border:0; background:white; display:block; line-height:18px; resize:none; }
+#data, #code { font: normal normal normal 12px/18px 'Consolas', monospace !important; }
+
+#param_list .folder { background:url('./file_sprite.png') right bottom no-repeat; }
+#param_list .file { background:url('./file_sprite.png') 0 0 no-repeat; }
+#param_list .file-pdf { background-position: -32px 0 }
+#param_list .file-as { background-position: -36px 0 }
+#param_list .file-c { background-position: -72px -0px }
+#param_list .file-iso { background-position: -108px -0px }
+#param_list .file-htm, #param_list .file-html, #param_list .file-xml, #param_list .file-xsl { background-position: -126px -0px }
+#param_list .file-cf { background-position: -162px -0px }
+#param_list .file-cpp { background-position: -216px -0px }
+#param_list .file-cs { background-position: -236px -0px }
+#param_list .file-sql { background-position: -272px -0px }
+#param_list .file-xls, #param_list .file-xlsx { background-position: -362px -0px }
+#param_list .file-h { background-position: -488px -0px }
+#param_list .file-crt, #param_list .file-pem, #param_list .file-cer { background-position: -452px -18px }
+#param_list .file-php { background-position: -108px -18px }
+#param_list .file-jpg, #param_list .file-jpeg, #param_list .file-png, #param_list .file-gif, #param_list .file-bmp { background-position: -126px -18px }
+#param_list .file-ppt, #param_list .file-pptx { background-position: -144px -18px }
+#param_list .file-rb { background-position: -180px -18px }
+#param_list .file-text, #param_list .file-txt, #param_list .file-md, #param_list .file-log, #param_list .file-htaccess { background-position: -254px -18px }
+#param_list .file-doc, #param_list .file-docx { background-position: -362px -18px }
+#param_list .file-zip, #param_list .file-gz, #param_list .file-tar, #param_list .file-rar { background-position: -416px -18px }
+#param_list .file-js { background-position: -434px -18px }
+#param_list .file-css { background-position: -144px -0px }
+#param_list .file-fla { background-position: -398px -0px }
+
+.search{
+	margin: 5px 10px 1px 4px !important;
+}
+
+.search_input{
+	width: 80%;
+}
