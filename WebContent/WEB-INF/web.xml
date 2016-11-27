@@ -47,13 +47,13 @@
   </servlet-mapping>
   <servlet>
     <description></description>
-    <display-name>TreeNodePackets</display-name>
-    <servlet-name>TreeNodePackets</servlet-name>
-    <servlet-class>cn.edu.buaa.im.servlet.TreeNodePacketsServlet</servlet-class>
+    <display-name>TreeNodeParam</display-name>
+    <servlet-name>TreeNodeParam</servlet-name>
+    <servlet-class>cn.edu.buaa.im.servlet.TreeNodeParamServlet</servlet-class>
   </servlet>
   <servlet-mapping>
-    <servlet-name>TreeNodePackets</servlet-name>
-    <url-pattern>/TreeNodePackets</url-pattern>
+    <servlet-name>TreeNodeParam</servlet-name>
+    <url-pattern>/TreeNodeParam</url-pattern>
   </servlet-mapping>
   <servlet>
     <description></description>

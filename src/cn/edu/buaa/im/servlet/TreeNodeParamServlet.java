@@ -1,36 +1,25 @@
 package cn.edu.buaa.im.servlet;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.List;
-import java.util.Properties;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.google.gson.Gson;
+import cn.edu.buaa.im.service.Utility;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import javax.servlet.ServletException;
-
-
-import cn.edu.buaa.im.data.TreeNodeReader;
-import cn.edu.buaa.im.model.TreeNode;
-import cn.edu.buaa.im.model.TreeNode.A_attr;
-import cn.edu.buaa.im.service.TreeNodeService;
-import cn.edu.buaa.im.service.Utility;
-import sun.org.mozilla.javascript.internal.ast.NewExpression;
-
-public class TreeNodeServlet extends BaseServlet{
+public class TreeNodeParamServlet extends HttpServlet {
 
 	/**
 	 * 
@@ -40,17 +29,17 @@ public class TreeNodeServlet extends BaseServlet{
 	@Override
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws  IOException {
-//		List<TreeNode> treeNodes;
-//
-//		String sid = request.getParameter("sid");
-//		if (sid == null || sid.equals("undefined"))
-//			treeNodes = TreeNodeReader.ReadTreeNodes();
-//		else{
-//			TreeNodeService treeNodeService = new TreeNodeService(sid);
-//			treeNodes = treeNodeService.geTreeNodes();
-//		}
-//		Gson gson = new Gson();
-//		responseString(response, gson.toJson(treeNodes));
+		//		List<TreeNode> treeNodes;
+		//
+		//		String sid = request.getParameter("sid");
+		//		if (sid == null || sid.equals("undefined"))
+		//			treeNodes = TreeNodeReader.ReadTreeNodes();
+		//		else{
+		//			TreeNodeService treeNodeService = new TreeNodeService(sid);
+		//			treeNodes = treeNodeService.geTreeNodes();
+		//		}
+		//		Gson gson = new Gson();
+		//		responseString(response, gson.toJson(treeNodes));
 		try {
 			this.doPost(request, response);
 		} catch (ServletException e) {
@@ -66,36 +55,26 @@ public class TreeNodeServlet extends BaseServlet{
 		request.setCharacterEncoding("UTF-8");
 		response.setHeader("Content-type", "text/html;charset=UTF-8");
 
-		String type = request.getParameter("type");
 		String packet_id = request.getParameter("packet_id");
 		String parentId = request.getParameter("parentId");
 		String tree_url;
 		if(parentId != null){
-			if(type.equals("dataArea")){
-				tree_url = Utility.getParameter("tree_url") + "/web/tree?parentId=" + parentId;
-			}else{
-				tree_url = Utility.getParameter("tree_url") + "/web/packets?parentId=" + parentId;
-			}
+			tree_url = Utility.getParameter("tree_url") + "/web/packList?id=" + packet_id+"&pid=" + parentId;
 		}else{
-			if(type.equals("dataArea")){
-				tree_url = Utility.getParameter("tree_url") + "/web/tree";
-			}else{
-				tree_url = Utility.getParameter("tree_url") + "/web/packets?id=" + packet_id;
-			}
+			tree_url = Utility.getParameter("tree_url") + "/web/packList?id=" + packet_id;
 		}
-		tree_url = Utility.getParameter("tree_url") + "/web/packets?id=" + packet_id;
 		String treeJsonString = loadJSON(tree_url);
-		
+
 		JsonObject node;
 		JsonArray nodes = new JsonParser().parse(treeJsonString).getAsJsonArray();
-		
+
 		int size = nodes.size();
 		for(int i=0; i<size; i++){
 			node = (JsonObject) nodes.get(i);
-			node.addProperty("parentId", parentId);
-			node.addProperty("isParent", false);
+//			node.addProperty("parentId", parentId);
+			node.addProperty("isParent", true);
 		}
-		
+
 		String result = nodes.toString();
 		//		responseString(response, result);
 		OutputStream ps = response.getOutputStream();  
@@ -125,7 +104,8 @@ public class TreeNodeServlet extends BaseServlet{
 			in.close();
 		} catch (Exception e) {
 		}
-		
+
 		return json.toString();
 	}
+
 }

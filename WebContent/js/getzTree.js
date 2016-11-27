@@ -2,6 +2,7 @@ var type = "dataArea";
 var packet_id = null;
 var zTree;
 var leftCurStatus = "init", leftCurAsyncCount = 0, leftAsyncForAll = false, leftGoAsync = false;
+var ifFirstAsync = true;
 var setting_leftTree = {
 		data: {
 			key: {
@@ -20,28 +21,83 @@ var setting_leftTree = {
 		async: {
 			autoParam:["id=parentId","name", "level=lv"],  
 			enable: true,
-			url:"/AnalysisAndMonitoring/TreeNode",
+			url:getUrl,
 			otherParam:{"type": type, "packet_id":packet_id},
-			dataFilter: filter
+			dataFilter: filter1
 		},
 		callback: {
 //			onCheck: leftZTreeOnCheck,
-			beforeAsync: leftZTreebeforeAsync,
-			onAsyncSuccess: leftZTreeonAsyncSuccess,
-			onAsyncError: leftZTreeonAsyncError,
-			onClick: zTreeOnClick
+//			beforeAsync: leftZTreebeforeAsync,
+//			onAsyncSuccess: leftZTreeonAsyncSuccess,
+//			onAsyncError: leftZTreeonAsyncError,
+			onCheck: leftZTreeOnCheck,
 		}
 
 };
 
-function zTreeOnClick(event, treeId, treeNode) {
-    alert(treeNode.isParent);
+function getUrl(){
+	return "/AnalysisAndMonitoring/TreeNode?type=" + type + "&packet_id=" + packet_id ;
+}
+
+function leftZTreeOnCheck(event, treeId, treeNode){
+	
+}
+
+
+
+//function zTreeOnClick(event, treeId, treeNode) {
+//    alert(treeNode.isParent);
+//};
+
+var setting_middleTree = {
+		data: {
+			simpleData: {
+				enable: true,
+				idKey: "id",
+				pIdKey: "pid",
+				rootPId: 0
+			},
+			key: {
+				name: "name"
+			}
+		},
+		check: {
+			enable: true
+		},
+		async: {
+			autoParam:["id=parentId","name", "level=lv"],  
+			enable: true,
+			url:getParamUrl,
+			otherParam:{"otherParam":"zTreeAsyncTest"},
+			dataFilter: filter2
+		},
+		view: {
+			fontCss: getFontCss
+		},
+		callback : {    
+			beforeAsync: leftZTreebeforeAsync,
+			onAsyncSuccess: leftZTreeonAsyncSuccess,
+			onAsyncError: leftZTreeonAsyncError
+		}    
+
 };
 
-function filter(treeId, parentNode, childNodes) {
+function getParamUrl(){
+	return "/AnalysisAndMonitoring/TreeNodeParam?packet_id=" + packet_id ;
+}
+
+function filter1(treeId, parentNode, childNodes) {
 	if (!childNodes) return null;
 	for (var i=0, l=childNodes.length; i<l; i++) {
 		childNodes[i].name = childNodes[i].mmName.replace(/\.n/g, '.');
+	}
+	return childNodes;
+}
+
+function filter2(treeId, parentNode, childNodes) {
+	if (!childNodes) return null;
+	for (var i=0, l=childNodes.length; i<l; i++) {
+		childNodes[i].name = childNodes[i].name.replace(/\.n/g, '.');
 	}
 	return childNodes;
 }
@@ -50,8 +106,6 @@ function filter(treeId, parentNode, childNodes) {
 function leftZTreebeforeAsync() {
 	leftCurAsyncCount++;
 }
-
-var ifFirstAsync = true;
 
 function leftZTreeonAsyncSuccess(event, treeId, treeNode, msg) {
 	leftCurAsyncCount--;
@@ -90,7 +144,6 @@ function leftExpandAll() {
 	if (!leftCheck()) {
 		return;
 	}
-	var zTree = $.fn.zTree.getZTreeObj("tree");
 	if (leftAsyncForAll) {
 		zTree.expandAll(true);
 	} else {
@@ -148,12 +201,54 @@ function leftCheck() {
 	if (leftCurAsyncCount > 0) {
 		return false;
 	}
-	var zTree = $.fn.zTree.getZTreeObj("tree");
-	var nodes = zTree.getNodes();
-	zTree.updateNode(nodes);
 	return true;
 }
 
+
+/** search start **/
+var lastValue = "", nodeList = [], fontCss = {};
+function focusKey(e) {
+	if (key.hasClass("empty")) {
+		key.removeClass("empty");
+	}
+}
+
+function blurKey(e) {
+	if (key.get(0).value === "") {
+		key.addClass("empty");
+	}
+}
+
+function searchNode(e) {
+	var zTree = $.fn.zTree.getZTreeObj("param_list_tree");
+	var value = $.trim(key.get(0).value);
+	var keyType = "name";
+	if (key.hasClass("empty")) {
+		value = "";
+	}
+	if (lastValue === value) return;
+	lastValue = value;
+	if (value === "") return;
+	updateNodes(false);
+
+	nodeList = zTree.getNodesByParamFuzzy(keyType, value);
+
+	updateNodes(true);
+
+}
+
+function updateNodes(highlight) {
+	var zTree = $.fn.zTree.getZTreeObj("param_list_tree");
+	for( var i=0, l=nodeList.length; i<l; i++) {
+		nodeList[i].highlight = highlight;
+		zTree.updateNode(nodeList[i]);
+	}
+}
+
+function getFontCss(treeId, treeNode) {
+	return (!!treeNode.highlight) ? {color:"#A60000", "font-weight":"bold"} : {color:"#333", "font-weight":"normal"};
+}
+/** search end **/
 
 $(document).ready(function(){
 	type = getUrlParam('type');
@@ -162,7 +257,8 @@ $(document).ready(function(){
 		alert("数据包id不能为空！");
 	}else{
 		$.fn.zTree.init($("#tree"), setting_leftTree);
-		zTree = $.fn.zTree.getZTreeObj("tree");
+		$.fn.zTree.init($("#param_list_tree"), setting_middleTree);
+		zTree = $.fn.zTree.getZTreeObj("param_list_tree");
 	}
 	
 //	$.fn.zTree.init($("#param_list_tree"), setting2);
