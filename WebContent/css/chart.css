@@ -8,6 +8,10 @@
 	display: block;
 }
 
+#chart_table .td{
+	min-width: 15px;
+}
+
 .my_table{
     margin:0;
 }

@@ -3,7 +3,8 @@
     box-shadow: 0 0 10px #BDBDBD;
     border-radius: 5px;
     max-height: none;
-	overflow: auto;
+    overflow:auto;
+	/* overflow: auto; */
 }
 
 #data { margin-left:320px;}
@@ -36,5 +37,21 @@
 #analysis_panel .file-fla { background-position: -398px -0px }
 
 .export_btn{
-	margin: 15px 10px 10px 10px !important;
+	/* position: absolute; */
+	right:10px;
+	margin-left: 10px;
+	margin-right: 10px;
+	/* margin: 15px 10px 10px 10px !important; */
+}
+
+.selector_container{
+	position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    font-size: 15px;
+   
+}
+
+.selector{
+	 width: 130px;
 }

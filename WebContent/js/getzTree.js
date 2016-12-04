@@ -1,5 +1,5 @@
 var type = "dataArea";
-var packet_id = null;
+var id = null;
 var zTree;
 var leftCurStatus = "init", leftCurAsyncCount = 0, leftAsyncForAll = false, leftGoAsync = false;
 var ifFirstAsync = true;
@@ -22,7 +22,7 @@ var setting_leftTree = {
 			autoParam:["id=parentId","name", "level=lv"],  
 			enable: true,
 			url:getUrl,
-			otherParam:{"type": type, "packet_id":packet_id},
+//			otherParam:{"type": type, "packet_id":id},
 			dataFilter: filter1
 		},
 		callback: {
@@ -30,24 +30,14 @@ var setting_leftTree = {
 //			beforeAsync: leftZTreebeforeAsync,
 //			onAsyncSuccess: leftZTreeonAsyncSuccess,
 //			onAsyncError: leftZTreeonAsyncError,
-			onCheck: leftZTreeOnCheck,
+//			onCheck: leftZTreeOnCheck,
 		}
 
 };
 
 function getUrl(){
-	return "/AnalysisAndMonitoring/TreeNode?type=" + type + "&packet_id=" + packet_id ;
+	return "/AnalysisAndMonitoring/TreeNode?type=" + type + "&id=" + id ;
 }
-
-function leftZTreeOnCheck(event, treeId, treeNode){
-	
-}
-
-
-
-//function zTreeOnClick(event, treeId, treeNode) {
-//    alert(treeNode.isParent);
-//};
 
 var setting_middleTree = {
 		data: {
@@ -72,7 +62,7 @@ var setting_middleTree = {
 			dataFilter: filter2
 		},
 		view: {
-			fontCss: getFontCss
+//			fontCss: getFontCss
 		},
 		callback : {    
 			beforeAsync: leftZTreebeforeAsync,
@@ -83,7 +73,7 @@ var setting_middleTree = {
 };
 
 function getParamUrl(){
-	return "/AnalysisAndMonitoring/TreeNodeParam?packet_id=" + packet_id ;
+	return "/AnalysisAndMonitoring/TreeNodeParam?type=" + type + "&id=" + id ;
 }
 
 function filter1(treeId, parentNode, childNodes) {
@@ -156,7 +146,7 @@ function leftExpandAll() {
 function leftExpandNodes(nodes) {
 	if (!nodes) return;
 	leftCurStatus = "expand";
-	
+
 	for (var i=0, l=nodes.length; i<l; i++) {
 		zTree.expandNode(nodes[i], true, false, false);
 		if (nodes[i].isParent && nodes[i].zAsync) {
@@ -206,7 +196,8 @@ function leftCheck() {
 
 
 /** search start **/
-var lastValue = "", nodeList = [], fontCss = {};
+var lastValue = "", nodeList = [], fontCss = {}, firstSearch = true;
+var hideNodes, showNodes;
 function focusKey(e) {
 	if (key.hasClass("empty")) {
 		key.removeClass("empty");
@@ -220,7 +211,7 @@ function blurKey(e) {
 }
 
 function searchNode(e) {
-	var zTree = $.fn.zTree.getZTreeObj("param_list_tree");
+	var param_list_tree = $.fn.zTree.getZTreeObj("param_list_tree");
 	var value = $.trim(key.get(0).value);
 	var keyType = "name";
 	if (key.hasClass("empty")) {
@@ -228,38 +219,83 @@ function searchNode(e) {
 	}
 	if (lastValue === value) return;
 	lastValue = value;
-	if (value === "") return;
-	updateNodes(false);
+	if (value === "") {
+		showNodes = param_list_tree.getNodesByParam("isHidden", true);
+		param_list_tree.showNodes(showNodes);
+		return;
+	}
+//	updateNodes(false);
 
-	nodeList = zTree.getNodesByParamFuzzy(keyType, value);
+	nodeList = param_list_tree.getNodesByParamFuzzy(keyType, value);
 
 	updateNodes(true);
 
 }
 
 function updateNodes(highlight) {
-	var zTree = $.fn.zTree.getZTreeObj("param_list_tree");
+	var param_list_tree = $.fn.zTree.getZTreeObj("param_list_tree");
+//	if(firstSearch && highlight){
+//		hideNodes = param_list_tree.getNodes();
+//		param_list_tree.hideNodes(hideNodes);
+//		firstSearch = false;
+//	}
+	hideNodes = param_list_tree.getNodesByParam("isHidden", false);
+	param_list_tree.hideNodes(hideNodes);
+	var changeNodes = nodeList;
 	for( var i=0, l=nodeList.length; i<l; i++) {
-		nodeList[i].highlight = highlight;
-		zTree.updateNode(nodeList[i]);
+//		nodeList[i].highlight = highlight;
+//		param_list_tree.updateNode(nodeList[i]);
+		var tempNode = nodeList[i];
+		while(tempNode!=null){
+			changeNodes.push(tempNode);
+			tempNode = tempNode.getParentNode();
+		}
 	}
+	param_list_tree.showNodes(changeNodes);
+//	if(changeNodes.length>0){
+//		if(highlight == true){
+//			param_list_tree.showNodes(changeNodes);
+//		}else{
+//			param_list_tree.hideNodes(changeNodes);
+//		}
+//	}
 }
 
 function getFontCss(treeId, treeNode) {
+//	treeNode.isHidden = (!!treeNode.highlight) ? false : true;
 	return (!!treeNode.highlight) ? {color:"#A60000", "font-weight":"bold"} : {color:"#333", "font-weight":"normal"};
 }
 /** search end **/
 
 $(document).ready(function(){
 	type = getUrlParam('type');
-	packet_id = getUrlParam('packet_id');
-	if(type == "packets" && packet_id == null){
-		alert("数据包id不能为空！");
+	var leftParentNodes;
+	if(type == "mainModel"){
+		objectName = "主模型";
 	}else{
-		$.fn.zTree.init($("#tree"), setting_leftTree);
+		objectName = "数据包";
+	}
+	id = getUrlParam('id');
+	if(id == null){
+		alert("id不能为空！");
+	}else{
+		var leftParentNodes = [
+		             { 
+		            	 mmName:objectName, 
+		            	 open:true,
+		            	 isParent:true,
+		            	 id:0
+		             }
+		             ];
+		$.fn.zTree.init($("#tree"), setting_leftTree, leftParentNodes);
 		$.fn.zTree.init($("#param_list_tree"), setting_middleTree);
 		zTree = $.fn.zTree.getZTreeObj("param_list_tree");
+		key = $("#key");
+		key.bind("focus", focusKey)
+		.bind("blur", blurKey)
+		.bind("propertychange", searchNode)
+		.bind("input", searchNode);
 	}
-	
+
 //	$.fn.zTree.init($("#param_list_tree"), setting2);
 });

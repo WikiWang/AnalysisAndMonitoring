@@ -13,7 +13,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import cn.edu.buaa.im.service.Utility;
+import cn.edu.buaa.im.util.LoadJson;
+import cn.edu.buaa.im.util.Utility;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -29,17 +30,6 @@ public class TreeNodeParamServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws  IOException {
-		//		List<TreeNode> treeNodes;
-		//
-		//		String sid = request.getParameter("sid");
-		//		if (sid == null || sid.equals("undefined"))
-		//			treeNodes = TreeNodeReader.ReadTreeNodes();
-		//		else{
-		//			TreeNodeService treeNodeService = new TreeNodeService(sid);
-		//			treeNodes = treeNodeService.geTreeNodes();
-		//		}
-		//		Gson gson = new Gson();
-		//		responseString(response, gson.toJson(treeNodes));
 		try {
 			this.doPost(request, response);
 		} catch (ServletException e) {
@@ -55,15 +45,17 @@ public class TreeNodeParamServlet extends HttpServlet {
 		request.setCharacterEncoding("UTF-8");
 		response.setHeader("Content-type", "text/html;charset=UTF-8");
 
-		String packet_id = request.getParameter("packet_id");
+		String type = request.getParameter("type");
+		String id = request.getParameter("id");
 		String parentId = request.getParameter("parentId");
-		String tree_url;
-		if(parentId != null){
-			tree_url = Utility.getParameter("tree_url") + "/web/packList?id=" + packet_id+"&pid=" + parentId;
+		String fileData_url;
+		if(parentId == null){
+			fileData_url = Utility.getParameter(type+"_fileData_url") + "?" + type + "Id=" + id + "&pid=";
 		}else{
-			tree_url = Utility.getParameter("tree_url") + "/web/packList?id=" + packet_id;
+			fileData_url = Utility.getParameter(type+"_fileData_url") + "?" + type + "Id=" + id + "&pid=" + parentId;
 		}
-		String treeJsonString = loadJSON(tree_url);
+		
+		String treeJsonString = LoadJson.loadJSON(fileData_url);
 
 		JsonObject node;
 		JsonArray nodes = new JsonParser().parse(treeJsonString).getAsJsonArray();
@@ -83,29 +75,5 @@ public class TreeNodeParamServlet extends HttpServlet {
 	}
 
 
-	/**
-	 * 访问url获取json数据
-	 * 
-	 * @param url
-	 *            地址
-	 * @return json字符串
-	 */
-	private String loadJSON(String url) {
-		StringBuilder json = new StringBuilder();
-		try {
-			URL oracle = new URL(url);
-			URLConnection yc = oracle.openConnection();
-			BufferedReader in = new BufferedReader(new InputStreamReader(
-					yc.getInputStream(),"utf-8"));
-			String inputLine = null;
-			while ((inputLine = in.readLine()) != null) {
-				json.append(inputLine);
-			}
-			in.close();
-		} catch (Exception e) {
-		}
-
-		return json.toString();
-	}
 
 }
