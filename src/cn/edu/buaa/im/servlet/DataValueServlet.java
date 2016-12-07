@@ -2,7 +2,6 @@ package cn.edu.buaa.im.servlet;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -13,10 +12,14 @@ import cn.edu.buaa.im.util.LoadJson;
 import cn.edu.buaa.im.util.Utility;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 public class DataValueServlet extends HttpServlet {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * The doGet method of the servlet. <br>
@@ -68,7 +71,7 @@ public class DataValueServlet extends HttpServlet {
 		}
 
 		String result = LoadJson.loadJSON(fileData_url);
-		System.out.println(fileData_url);
+//		System.out.println(fileData_url);
 		
 		JsonArray nodes = new JsonParser().parse(result).getAsJsonArray();
 

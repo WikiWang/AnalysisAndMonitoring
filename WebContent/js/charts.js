@@ -1,4 +1,4 @@
-$("#chart_panel").css("height", $(window).height()-215);
+$("#chart_panel").css("height", 480);
 window.onresize = function(){
 
 	myChart.resize();
@@ -113,6 +113,14 @@ function showPieChart() {
 		            saveAsImage : {show: true}
 		        }
 		    },
+		    series : [
+		              {
+		                  type:'pie',
+		                  radius : '55%',
+		                  center: ['50%', '60%'],
+		                  data:[]
+		              }
+		          ],
 		    calculable : true,
 		};
 	
@@ -334,8 +342,12 @@ function showScatterChart() {
 		    ],
 		};
 	if(mainArray.length > 0 && paramArray.length == 2){
-		if(isNaN(dataArray[0][0]) || isNaN(dataArray[1][0]) ){
-			alert("请选择数值型参数！");
+		if(isNaN(dataArray[0][0])){
+			alert("请选择数值型参数！["+paramArray[0]+"]为非数值型参数");
+			$("#chart_selector ").val(lastChartSelectorValue);
+			return;
+		}else if(isNaN(dataArray[1][0])){
+			alert("请选择数值型参数！["+paramArray[1]+"]为非数值型参数");
 			$("#chart_selector ").val(lastChartSelectorValue);
 			return;
 		}
@@ -349,7 +361,7 @@ function showScatterChart() {
 	    	};
 			series.push(item);
 	    }
-		scatterChart.series = seriess;
+		scatterChart.series = series;
 		$("#chart_table").css('display','none'); 
 		$("#chart_panel").css('display','block');
 		myChart.setOption(scatterChart,true); 
@@ -415,7 +427,10 @@ function analysis() {
 		if(!middleNodes[k].isParent){
 			paramArray.push(middleNodes[k].name);
 			var rowArray = new Array();//表格行数据
-			var newTdRow = "<tr><td>" + middleNodes[k].name + "</td>";
+			var newTdRow = "<td>" + middleNodes[k].name + "</td>";
+			var ifSame = true;
+			var ifFirstValue=true;
+			var lastValue;
 			for(var j=0; j<leftNodes.length; j++){
 				if(!leftNodes[j].isParent){
 					$.ajax({
@@ -425,10 +440,15 @@ function analysis() {
 						data: {id:mainId, parentId:middleNodes[k].id, version:leftNodes[j].version, type:type},
 						dataType: 'json',
 						success:function(data){
-//							alert(data);
 							if(data[0] != null){
 								newTdRow += "<td>"+ data[0].value +"</td>";
 								rowArray.push(data[0].value);
+								if(ifFirstValue){
+									lastValue = data[0].value;
+									ifFirstValue = false;
+								}else if(lastValue != data[0].value){
+									ifSame = false;
+								}
 							}else{
 								newTdRow += "<td></td>";
 								rowArray.push(null);
@@ -438,7 +458,11 @@ function analysis() {
 				}
 			}
 			dataArray.push(rowArray);
-			newTdRow += "</tr>";
+			if(ifSame){
+				newTdRow = "<tr>" + newTdRow + "</tr>";
+			}else{
+				newTdRow = "<tr class='tr_red'>" + newTdRow + "</tr>";
+			}
 			tbody.append(newTdRow);
 		}
 	}

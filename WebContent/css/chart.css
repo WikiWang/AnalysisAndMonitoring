@@ -15,3 +15,7 @@
 .my_table{
     margin:0;
 }
+
+.tr_red{
+	color: red !important;
+}

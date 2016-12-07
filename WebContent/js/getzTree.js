@@ -1,8 +1,11 @@
 var type = "dataArea";
 var id = null;
-var zTree;
-var leftCurStatus = "init", leftCurAsyncCount = 0, leftAsyncForAll = false, leftGoAsync = false;
-var ifFirstAsync = true;
+var left_tree;
+var middle_tree;
+/**
+ * left tree setting start
+ */
+var leftCurStatus = "left_init", leftCurAsyncCount = 0, leftAsyncForAll = false, leftGoAsync = false;
 var setting_leftTree = {
 		data: {
 			key: {
@@ -22,15 +25,12 @@ var setting_leftTree = {
 			autoParam:["id=parentId","name", "level=lv"],  
 			enable: true,
 			url:getUrl,
-//			otherParam:{"type": type, "packet_id":id},
 			dataFilter: filter1
 		},
 		callback: {
-//			onCheck: leftZTreeOnCheck,
-//			beforeAsync: leftZTreebeforeAsync,
-//			onAsyncSuccess: leftZTreeonAsyncSuccess,
-//			onAsyncError: leftZTreeonAsyncError,
-//			onCheck: leftZTreeOnCheck,
+			beforeAsync: leftZTreebeforeAsync,
+			onAsyncSuccess: leftZTreeonAsyncSuccess,
+			onAsyncError: leftZTreeonAsyncError,
 		}
 
 };
@@ -39,6 +39,120 @@ function getUrl(){
 	return "/AnalysisAndMonitoring/TreeNode?type=" + type + "&id=" + id ;
 }
 
+function filter1(treeId, parentNode, childNodes) {
+	if (!childNodes) return null;
+	for (var i=0, l=childNodes.length; i<l; i++) {
+		childNodes[i].name = childNodes[i].mmName.replace(/\.n/g, '.');
+	}
+	return childNodes;
+}
+
+function leftZTreebeforeAsync() {
+	leftCurAsyncCount++;
+}
+
+function leftZTreeonAsyncSuccess(event, treeId, treeNode, msg) {
+	leftCurAsyncCount--;
+	if (leftCurStatus == "left_expand") {
+		if(treeNode.children.length==0){
+			treeNode.isParent = false;
+			left_tree.updateNode(treeNode);
+		}else{
+			leftExpandNodes(treeNode.children);
+		}
+	} else if (leftCurStatus == "left_async") {
+		leftAsyncNodes(treeNode.children);
+	}
+
+	if (leftCurAsyncCount <= 0) {
+		if (leftCurStatus != "left_init" && leftCurStatus != "") {
+			leftAsyncForAll = true;
+		}
+		leftCurStatus = "";
+	}
+}
+
+function leftZTreeonAsyncError(event, treeId, treeNode, XMLHttpRequest, textStatus, errorThrown) {
+	leftCurAsyncCount--;
+
+	if (leftCurAsyncCount <= 0) {
+		leftCurStatus = "";
+		if (treeNode!=null) leftAsyncForAll = true;
+	}
+}
+
+
+function leftExpandAll() {
+	if (!leftCheck()) {
+		return;
+	}
+	if (leftAsyncForAll) {
+		left_tree.expandAll(true);
+	} else {
+		leftExpandNodes(left_tree.getNodes());
+		if (!leftGoAsync) {
+			leftCurStatus = "";
+		}
+	}
+}
+function leftExpandNodes(nodes) {
+	if (!nodes) return;
+	leftCurStatus = "left_expand";
+
+	for (var i=0, l=nodes.length; i<l; i++) {
+		left_tree.expandNode(nodes[i], true, false, false);
+		if (nodes[i].isParent && nodes[i].zAsync) {
+			if(nodes[i].children.length==0){
+				nodes[i].isParent = false;
+				left_tree.updateNode(treeNode);
+			}else{
+				leftExpandNodes(nodes[i].children);
+			}
+		} else {
+			leftGoAsync = true;
+		}
+	}
+}
+
+function leftAsyncAll() {
+	if (!leftCheck()) {
+		return;
+	}
+	if (!leftAsyncForAll) {
+		leftAsyncNodes(left_tree.getNodes());
+		if (!leftGoAsync) {
+			leftCurStatus = "";
+		}
+	}
+}
+function leftAsyncNodes(nodes) {
+	if (!nodes) return;
+	leftCurStatus = "left_async";
+	for (var i=0, l=nodes.length; i<l; i++) {
+		if (nodes[i].isParent && nodes[i].zAsync) {
+			leftAsyncNodes(nodes[i].children);
+		} else {
+			leftGoAsync = true;
+			left_tree.reAsyncChildNodes(nodes[i], "refresh", true);
+		}
+	}
+}
+
+
+function leftCheck() {
+	if (leftCurAsyncCount > 0) {
+		return false;
+	}
+	return true;
+}
+/**
+ * left tree setting end
+ */
+
+/**
+ * middle tree setting start
+ */
+var middleCurStatus = "middle_init", middleCurAsyncCount = 0, middleAsyncForAll = false, middleGoAsync = false;
 var setting_middleTree = {
 		data: {
 			simpleData: {
@@ -65,23 +179,15 @@ var setting_middleTree = {
 //			fontCss: getFontCss
 		},
 		callback : {    
-			beforeAsync: leftZTreebeforeAsync,
-			onAsyncSuccess: leftZTreeonAsyncSuccess,
-			onAsyncError: leftZTreeonAsyncError
+			beforeAsync: middleZTreebeforeAsync,
+			onAsyncSuccess: middleZTreeonAsyncSuccess,
+			onAsyncError: middleZTreeonAsyncError
 		}    
 
 };
 
 function getParamUrl(){
 	return "/AnalysisAndMonitoring/TreeNodeParam?type=" + type + "&id=" + id ;
-}
-
-function filter1(treeId, parentNode, childNodes) {
-	if (!childNodes) return null;
-	for (var i=0, l=childNodes.length; i<l; i++) {
-		childNodes[i].name = childNodes[i].mmName.replace(/\.n/g, '.');
-	}
-	return childNodes;
 }
 
 function filter2(treeId, parentNode, childNodes) {
@@ -92,108 +198,109 @@ function filter2(treeId, parentNode, childNodes) {
 	return childNodes;
 }
 
-
-function leftZTreebeforeAsync() {
-	leftCurAsyncCount++;
+function middleZTreebeforeAsync() {
+	middleCurAsyncCount++;
 }
 
-function leftZTreeonAsyncSuccess(event, treeId, treeNode, msg) {
-	leftCurAsyncCount--;
-	if (leftCurStatus == "expand") {
+function middleZTreeonAsyncSuccess(event, treeId, treeNode, msg) {
+	middleCurAsyncCount--;
+	if (middleCurStatus == "middle_expand") {
 		if(treeNode.children.length==0){
 			treeNode.isParent = false;
-			zTree.updateNode(treeNode);
+			middle_tree.updateNode(treeNode);
 		}else{
-			leftExpandNodes(treeNode.children);
+			middleExpandNodes(treeNode.children);
 		}
-	} else if (leftCurStatus == "async") {
-		leftAsyncNodes(treeNode.children);
-	} else if(leftCurStatus == "init"){
-		leftExpandAll();
+	} else if (middleCurStatus == "middle_async") {
+		middleAsyncNodes(treeNode.children);
+	} else if(middleCurStatus == "middle_init"){
+		middleExpandAll();
 	}
 
-	if (leftCurAsyncCount <= 0) {
-		if (leftCurStatus != "init" && leftCurStatus != "") {
-			leftAsyncForAll = true;
+	if (middleCurAsyncCount <= 0) {
+		if (middleCurStatus != "middle_init" && middleCurStatus != "") {
+			middleAsyncForAll = true;
 		}
-		leftCurStatus = "";
+		middleCurStatus = "";
 	}
 }
 
-function leftZTreeonAsyncError(event, treeId, treeNode, XMLHttpRequest, textStatus, errorThrown) {
-	leftCurAsyncCount--;
+function middleZTreeonAsyncError(event, treeId, treeNode, XMLHttpRequest, textStatus, errorThrown) {
+	middleCurAsyncCount--;
 
-	if (leftCurAsyncCount <= 0) {
-		leftCurStatus = "";
-		if (treeNode!=null) leftAsyncForAll = true;
+	if (middleCurAsyncCount <= 0) {
+		middleCurStatus = "";
+		if (treeNode!=null) middleAsyncForAll = true;
 	}
 }
 
 
-function leftExpandAll() {
-	if (!leftCheck()) {
+function middleExpandAll() {
+	if (!middleCheck()) {
 		return;
 	}
-	if (leftAsyncForAll) {
-		zTree.expandAll(true);
+	if (middleAsyncForAll) {
+		middle_tree.expandAll(true);
 	} else {
-		leftExpandNodes(zTree.getNodes());
-		if (!leftGoAsync) {
-			leftCurStatus = "";
+		middleExpandNodes(middle_tree.getNodes());
+		if (!middleGoAsync) {
+			middleCurStatus = "";
 		}
 	}
 }
-function leftExpandNodes(nodes) {
+function middleExpandNodes(nodes) {
 	if (!nodes) return;
-	leftCurStatus = "expand";
+	middleCurStatus = "middle_expand";
 
 	for (var i=0, l=nodes.length; i<l; i++) {
-		zTree.expandNode(nodes[i], true, false, false);
+		middle_tree.expandNode(nodes[i], true, false, false);
 		if (nodes[i].isParent && nodes[i].zAsync) {
 			if(nodes[i].children.length==0){
 				nodes[i].isParent = false;
-				zTree.updateNode(treeNode);
+				middle_tree.updateNode(treeNode);
 			}else{
-				leftExpandNodes(nodes[i].children);
+				middleExpandNodes(nodes[i].children);
 			}
 		} else {
-			leftGoAsync = true;
+			middleGoAsync = true;
 		}
 	}
 }
 
-function leftAsyncAll() {
-	if (!leftCheck()) {
+function middleAsyncAll() {
+	if (!middleCheck()) {
 		return;
 	}
-	if (!leftAsyncForAll) {
-		leftAsyncNodes(zTree.getNodes());
-		if (!leftGoAsync) {
-			leftCurStatus = "";
+	if (!middleAsyncForAll) {
+		middleAsyncNodes(middle_tree.getNodes());
+		if (!middleGoAsync) {
+			middleCurStatus = "";
 		}
 	}
 }
-function leftAsyncNodes(nodes) {
+function middleAsyncNodes(nodes) {
 	if (!nodes) return;
-	leftCurStatus = "async";
+	middleCurStatus = "middle_async";
 	for (var i=0, l=nodes.length; i<l; i++) {
 		if (nodes[i].isParent && nodes[i].zAsync) {
-			leftAsyncNodes(nodes[i].children);
+			middleAsyncNodes(nodes[i].children);
 		} else {
-			leftGoAsync = true;
-			zTree.reAsyncChildNodes(nodes[i], "refresh", true);
+			middleGoAsync = true;
+			middle_tree.reAsyncChildNodes(nodes[i], "refresh", true);
 		}
 	}
 }
 
 
-function leftCheck() {
-	if (leftCurAsyncCount > 0) {
+function middleCheck() {
+	if (middleCurAsyncCount > 0) {
 		return false;
 	}
 	return true;
 }
-
+/**
+ * middle tree setting end
+ */
 
 /** search start **/
 var lastValue = "", nodeList = [], fontCss = {}, firstSearch = true;
@@ -211,7 +318,6 @@ function blurKey(e) {
 }
 
 function searchNode(e) {
-	var param_list_tree = $.fn.zTree.getZTreeObj("param_list_tree");
 	var value = $.trim(key.get(0).value);
 	var keyType = "name";
 	if (key.hasClass("empty")) {
@@ -220,49 +326,33 @@ function searchNode(e) {
 	if (lastValue === value) return;
 	lastValue = value;
 	if (value === "") {
-		showNodes = param_list_tree.getNodesByParam("isHidden", true);
-		param_list_tree.showNodes(showNodes);
+		showNodes = middle_tree.getNodesByParam("isHidden", true);
+		middle_tree.showNodes(showNodes);
 		return;
 	}
 //	updateNodes(false);
 
-	nodeList = param_list_tree.getNodesByParamFuzzy(keyType, value);
+	nodeList = middle_tree.getNodesByParamFuzzy(keyType, value);
 
 	updateNodes(true);
 
 }
 
 function updateNodes(highlight) {
-	var param_list_tree = $.fn.zTree.getZTreeObj("param_list_tree");
-//	if(firstSearch && highlight){
-//		hideNodes = param_list_tree.getNodes();
-//		param_list_tree.hideNodes(hideNodes);
-//		firstSearch = false;
-//	}
-	hideNodes = param_list_tree.getNodesByParam("isHidden", false);
-	param_list_tree.hideNodes(hideNodes);
+	hideNodes = middle_tree.getNodesByParam("isHidden", false);
+	middle_tree.hideNodes(hideNodes);
 	var changeNodes = nodeList;
 	for( var i=0, l=nodeList.length; i<l; i++) {
-//		nodeList[i].highlight = highlight;
-//		param_list_tree.updateNode(nodeList[i]);
 		var tempNode = nodeList[i];
 		while(tempNode!=null){
 			changeNodes.push(tempNode);
 			tempNode = tempNode.getParentNode();
 		}
 	}
-	param_list_tree.showNodes(changeNodes);
-//	if(changeNodes.length>0){
-//		if(highlight == true){
-//			param_list_tree.showNodes(changeNodes);
-//		}else{
-//			param_list_tree.hideNodes(changeNodes);
-//		}
-//	}
+	middle_tree.showNodes(changeNodes);
 }
 
 function getFontCss(treeId, treeNode) {
-//	treeNode.isHidden = (!!treeNode.highlight) ? false : true;
 	return (!!treeNode.highlight) ? {color:"#A60000", "font-weight":"bold"} : {color:"#333", "font-weight":"normal"};
 }
 /** search end **/
@@ -270,18 +360,13 @@ function getFontCss(treeId, treeNode) {
 $(document).ready(function(){
 	type = getUrlParam('type');
 	var leftParentNodes;
-	if(type == "mainModel"){
-		objectName = "主模型";
-	}else{
-		objectName = "数据包";
-	}
 	id = getUrlParam('id');
 	if(id == null){
 		alert("id不能为空！");
 	}else{
 		var leftParentNodes = [
 		             { 
-		            	 mmName:objectName, 
+		            	 mmName:"全部", 
 		            	 open:true,
 		            	 isParent:true,
 		            	 id:0
@@ -289,7 +374,9 @@ $(document).ready(function(){
 		             ];
 		$.fn.zTree.init($("#tree"), setting_leftTree, leftParentNodes);
 		$.fn.zTree.init($("#param_list_tree"), setting_middleTree);
-		zTree = $.fn.zTree.getZTreeObj("param_list_tree");
+		left_tree = $.fn.zTree.getZTreeObj("tree");
+		middle_tree = $.fn.zTree.getZTreeObj("param_list_tree");
+		leftExpandAll();
 		key = $("#key");
 		key.bind("focus", focusKey)
 		.bind("blur", blurKey)
