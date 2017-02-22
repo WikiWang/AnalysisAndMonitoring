@@ -351,7 +351,6 @@ function showScatterChart() {
 			$("#chart_selector ").val(lastChartSelectorValue);
 			return;
 		}
-		scatterChart.legend.data = mainArray;
 		var series=[];
 		for(var i=0; i<dataArray[0].length; i++){
 			var item={
@@ -416,6 +415,7 @@ function analysis() {
 			mainArray.push(leftNodes[i].mmName);
 		}
 	}
+	mainArray.reverse();
 	newRow += "</tr>";
 	thead.append(newRow);
 
@@ -457,6 +457,7 @@ function analysis() {
 					});
 				}
 			}
+			rowArray.reverse();
 			dataArray.push(rowArray);
 			if(ifSame){
 				newTdRow = "<tr>" + newTdRow + "</tr>";
@@ -493,7 +494,7 @@ function select_change(){
 	case "6":
 		showScatterChart();
 		break;
-	default:s
+	default:
 	break;
 	}
 }

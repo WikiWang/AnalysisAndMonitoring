@@ -53,8 +53,8 @@ public class LoadJson {
 	public static String loadJSON(String url) {
 		StringBuilder json = new StringBuilder();
 		try {
-			URL oracle = new URL(url);
-			URLConnection yc = oracle.openConnection();
+			URL httpURL = new URL(url);
+			URLConnection yc = httpURL.openConnection();
 			BufferedReader in = new BufferedReader(new InputStreamReader(
 					yc.getInputStream(),"utf-8"));
 			String inputLine = null;

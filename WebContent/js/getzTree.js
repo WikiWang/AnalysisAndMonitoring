@@ -43,6 +43,13 @@ function filter1(treeId, parentNode, childNodes) {
 	if (!childNodes) return null;
 	for (var i=0, l=childNodes.length; i<l; i++) {
 		childNodes[i].name = childNodes[i].mmName.replace(/\.n/g, '.');
+		if(versions != null){
+			for(var j=0; j<versions.length; j++){
+				if(childNodes[i].version == versions[j]){
+					childNodes[i].checked = true;
+				}
+			}
+		}
 	}
 	return childNodes;
 }
@@ -357,10 +364,15 @@ function getFontCss(treeId, treeNode) {
 }
 /** search end **/
 
+var versions;
 $(document).ready(function(){
 	type = getUrlParam('type');
 	var leftParentNodes;
 	id = getUrlParam('id');
+	var versionstr = getUrlParam("versions");
+	if(versionstr != null){
+		versions = versionstr.split(",");
+	}
 	if(id == null){
 		alert("id不能为空！");
 	}else{
